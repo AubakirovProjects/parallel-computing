@@ -1,0 +1,84 @@
+#include <iostream>
+#include <vector>
+
+double inputMarks(const char* message) {
+    double value;
+    do {
+        std::cout << message;
+        std::cin >> value;
+        if (value < 0 || value > 5)
+            std::cout << "Балл должен быть от 0 до 5" << std::endl;
+        else
+            break;
+    } while (true);
+    return value;
+}
+
+double studentAverage(const std::vector<double>& studentMarks) {
+    double sum = 0;
+    for (int i = 0; i < studentMarks.size(); i++) {
+        sum += studentMarks[i];
+    }
+    return sum / studentMarks.size();
+}
+
+double subjectAverage(const std::vector<std::vector<double>>& allMarks, int subjectIndex) {
+    double sum = 0;
+    for (int i = 0; i < allMarks.size(); i++) {
+        sum += allMarks[i][subjectIndex];
+    }
+    return sum / allMarks.size();
+}
+
+int findBestStudent(const std::vector<std::vector<double>>& allMarks) {
+    int bestIndex = 0;
+    double bestAverage = 0;
+    
+    for (int i = 0; i < allMarks.size(); i++) {
+        double currentAverage = studentAverage(allMarks[i]);
+        if (currentAverage > bestAverage) {
+            bestAverage = currentAverage;
+            bestIndex = i;
+        }
+    }
+    return bestIndex;
+}
+
+int main() {
+    int studentsCount, subjectsCount;
+    
+    std::cout << "Введите количество студентов: ";
+    std::cin >> studentsCount;
+    std::cout << "Введите количество предметов: ";
+    std::cin >> subjectsCount;
+    
+    std::vector<std::vector<double>> allMarks(studentsCount, std::vector<double>(subjectsCount));
+    
+    for (int student = 0; student < studentsCount; student++) {
+        std::cout << "Студент " << student + 1 << ":" << std::endl;
+        for (int subject = 0; subject < subjectsCount; subject++) {
+            char message[50];
+            sprintf(message, "  Оценка по предмету %d: ", subject + 1);
+            allMarks[student][subject] = inputMarks(message);
+        }
+    }
+    
+    std::cout << "Средние баллы студентов:" << std::endl;
+    for (int student = 0; student < studentsCount; student++) {
+        double average = studentAverage(allMarks[student]);
+        std::cout << "Студент " << student + 1 << ": " << average << std::endl;
+    }
+    
+    std::cout << "Средние баллы по предметам:" << std::endl;
+    for (int subject = 0; subject < subjectsCount; subject++) {
+        double average = subjectAverage(allMarks, subject);
+        std::cout << "Предмет " << subject + 1 << ": " << average << std::endl;
+    }
+    
+    int bestStudent = findBestStudent(allMarks);
+    std::cout << "Лучший студент:" << std::endl;
+    std::cout << "Студент " << bestStudent + 1 
+              << " со средним баллом " << studentAverage(allMarks[bestStudent]) << std::endl;
+    
+    return 0;
+}
